@@ -1,6 +1,5 @@
-import { FunctionResource } from '@aws-amplify/amplify-function-types';
+import { defineFunction } from '@aws-amplify/backend'; 
+export const postConfirmation = defineFunction({ 
+  name: 'post-confirmation',
+});
 
-export const resource: FunctionResource = {
-  name: 'postConfirmationFunction',
-  runtime: 'nodejs18.x',
-};
