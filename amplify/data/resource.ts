@@ -1,21 +1,25 @@
-import { ModelInit, MutableModel, PersistentModelConstructor } from "@aws-amplify/datastore";
-
-export enum UserProfileFields {
-  USERNAME = "username",
-  EMAIL = "email",
-  PROFILE_OWNER = "profileOwner",
-}
-
-export type UserProfile = {
-  readonly id: string;
-  readonly username: string;
-  readonly email: string;
-  readonly profileOwner: string;
-};
-
-export const UserProfileModel: PersistentModelConstructor<UserProfile> = class UserProfile {
-  constructor(init: ModelInit<UserProfile>) {}
-  static copyOf(source: UserProfile, mutator: (draft: MutableModel<UserProfile>) => void): UserProfile {
-    return source;
-  }
-};
+import { type ClientSchema, a, defineData } from "@aws-amplify/
+backend";
+import { postConfirmation } from "../auth/post-confirmation/resource";
+const schema = a
+ .schema({
+ UserProfile: a
+ .model({
+ email: a.string(),
+ profileOwner: a.string(),
+ })
+ .authorization((allow) => [
+ allow.ownerDefinedIn("profileOwner"),
+ ]),
+ })
+ .authorization((allow) => [allow.resource(postConfirmation)]);
+export type Schema = ClientSchema<typeof schema>;
+export const data = defineData({
+ schema,
+ authorizationModes: {
+ defaultAuthorizationMode: "apiKey",
+ apiKeyAuthorizationMode: {
+ expiresInDays: 30,
+ },
+ },
+});
